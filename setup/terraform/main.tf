@@ -325,6 +325,7 @@ data "aws_iam_policy_document" "github_policy" {
   statement {
     effect    = "Allow"
     actions   = ["ecr:*", "eks:*", "ec2:*", "iam:GetUser"]
+
     resources = ["*"]
   }
 }
