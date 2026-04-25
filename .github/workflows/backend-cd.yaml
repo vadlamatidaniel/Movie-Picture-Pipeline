@@ -14,10 +14,39 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: starter/backend
+
     steps:
+      # Checkout
       - name: Checkout
         uses: actions/checkout@v3
 
+      # Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      # Lint
+      - name: Lint code
+        run: |
+          pip install flake8
+          flake8 .
+
+      # Run tests
+      - name: Run tests
+        run: |
+          pip install pytest
+          pytest
+
+      # AWS creds
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -25,29 +54,32 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      # ECR login
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
+      # Build + Push
       - name: Build and Push Docker image
         run: |
-          docker build -t $ECR_BACKEND_REPO:$IMAGE_TAG starter/backend
+          docker build -t $ECR_BACKEND_REPO:$IMAGE_TAG .
           docker push $ECR_BACKEND_REPO:$IMAGE_TAG
         env:
           ECR_BACKEND_REPO: ${{ secrets.ECR_BACKEND_REPO }}
 
+      # Update kubeconfig
       - name: Update kubeconfig
         run: |
           aws eks update-kubeconfig \
             --name ${{ secrets.EKS_CLUSTER_NAME }} \
             --region ${{ secrets.AWS_REGION }}
 
-      - name: Install kustomize
-        run: |
-          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
-          mv kustomize /usr/local/bin/
+      # ✅ FIXED: Use action instead of curl
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v2
 
+      # Deploy
       - name: Deploy to EKS
         run: |
-          cd starter/backend/k8s
+          cd k8s
           kustomize edit set image backend=${{ secrets.ECR_BACKEND_REPO }}:$IMAGE_TAG
           kustomize build | kubectl apply -f -

@@ -1,7 +1,7 @@
 name: Frontend Continuous Integration
 
 on:
-  push:
+  pull_request:
     branches: [main]
     paths:
       - "starter/frontend/**"
@@ -27,7 +27,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: starter/frontend/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('starter/frontend/package-lock.json') }}
 
       - name: Install dependencies
         run: npm ci
@@ -51,7 +51,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: starter/frontend/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('starter/frontend/package-lock.json') }}
 
       - run: npm ci
       - run: CI=true npm test
@@ -66,9 +66,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
       - name: Build Docker image
         run: |
           docker build \
-            --build-arg REACT_APP_MOVIE_API_URL=http://localhost:5000 \
+            --build-arg REACT_APP_MOVIE_API_URL=${{ secrets.REACT_APP_MOVIE_API_URL }} \
             -t frontend:test .
