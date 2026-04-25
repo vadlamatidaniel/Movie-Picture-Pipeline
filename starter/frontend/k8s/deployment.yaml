@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  labels:
-    app: frontend
 spec:
   replicas: 1
   selector:
@@ -18,4 +16,4 @@ spec:
         - name: frontend
           image: frontend
           ports:
-            - containerPort: 3000
+            - containerPort: 80
