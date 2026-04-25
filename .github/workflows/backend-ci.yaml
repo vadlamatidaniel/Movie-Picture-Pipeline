@@ -10,6 +10,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: starter/backend
@@ -20,21 +21,19 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
-
-      - name: Install pipenv
-        run: pip install pipenv
+          python-version: "3.9"
 
       - name: Install dependencies
         run: |
-          pipenv install
-          pipenv run pip install flake8
+          pip install -r requirements.txt
+          pip install flake8
 
       - name: Run lint
-        run: pipenv run lint
+        run: flake8 .
 
   test:
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: starter/backend
@@ -45,15 +44,15 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
-      - name: Install pipenv
-        run: pip install pipenv
+          python-version: "3.9"
 
       - name: Install dependencies
-        run: pipenv install
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
 
       - name: Run tests
-        run: pipenv run test
+        run: pytest
 
   build:
     runs-on: ubuntu-latest
