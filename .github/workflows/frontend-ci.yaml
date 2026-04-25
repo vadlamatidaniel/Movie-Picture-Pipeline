@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "frontend/**"
+      - "starter/frontend/**"
   workflow_dispatch:
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: frontend
+        working-directory: starter/frontend
 
     steps:
       - name: Checkout
@@ -26,7 +26,7 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
-          path: frontend/node_modules
+          path: starter/frontend/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
 
       - name: Install dependencies
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: frontend
+        working-directory: starter/frontend
 
     steps:
       - uses: actions/checkout@v3
@@ -50,7 +50,7 @@ jobs:
 
       - uses: actions/cache@v3
         with:
-          path: frontend/node_modules
+          path: starter/frontend/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
 
       - run: npm ci
@@ -62,7 +62,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: frontend
+        working-directory: starter/frontend
 
     steps:
       - uses: actions/checkout@v3
