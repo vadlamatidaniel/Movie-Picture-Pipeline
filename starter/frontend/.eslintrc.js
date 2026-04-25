@@ -27,10 +27,10 @@ module.exports = {
         singleQuote: true,
         jsxSingleQuote: false,
         printWidth: 120,
-        parser: 'babel-ts'
-      }
+        parser: 'babel-ts',
+      },
     ],
     'react/prop-types': process.env.FAIL_LINT ? 2 : 0,
-    'react/jsx-uses-vars': 'warn'
-  }
+    'react/jsx-uses-vars': 'warn',
+  },
 };
